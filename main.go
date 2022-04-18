@@ -8,8 +8,7 @@ import (
 	"time"
 )
 
-var DefaultThreadsAmount int = 4
-
+const DefaultThreadsAmount int = 4
 const MapSize int = 16
 
 func main() {
