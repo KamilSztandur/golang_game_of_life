@@ -12,19 +12,8 @@ import (
 var clear map[string]func()
 
 func PrintMapState(currentMap [config.MapSize][config.MapSize]bool) {
-	for _, row := range currentMap {
-		for _, cell := range row {
-			if cell {
-				fmt.Print("# ")
-			} else {
-				fmt.Print(" ")
-			}
-		}
-
-		fmt.Println()
-	}
-
-	time.Sleep(1 * time.Second)
+	printMapToScreen(currentMap)
+	waitFewMoments()
 	callClear()
 }
 
@@ -56,4 +45,22 @@ func callClear() {
 	if ok {
 		value()
 	}
+}
+
+func printMapToScreen(currentMap [config.MapSize][config.MapSize]bool) {
+	for _, row := range currentMap {
+		for _, cell := range row {
+			if cell {
+				fmt.Print("# ")
+			} else {
+				fmt.Print(" ")
+			}
+		}
+
+		fmt.Println()
+	}
+}
+
+func waitFewMoments() {
+	time.Sleep(1 * time.Second)
 }
