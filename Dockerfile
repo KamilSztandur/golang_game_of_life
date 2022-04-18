@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /golsim
+RUN go build -o /input_handlers
 
 EXPOSE 8080
 
