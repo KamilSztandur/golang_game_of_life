@@ -24,7 +24,13 @@ func main() {
 			return
 		}
 
-		threadsAmount = inputAmount
+		if input_handlers.IsGivenThreadsAmountBiggerThanMap(inputAmount) {
+			threadsAmount = config.MapSize * config.MapSize
+			fmt.Printf("Entered threads amount is bigger than map which is prohibited. Reducing threads amount to %d.\n", threadsAmount)
+		} else {
+			threadsAmount = inputAmount
+		}
+
 	}
 
 	game_engine.LaunchGame(threadsAmount)

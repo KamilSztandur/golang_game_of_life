@@ -1,6 +1,7 @@
 package input_handlers
 
 import (
+	"golang_game_of_life/config"
 	"os"
 )
 
@@ -14,6 +15,10 @@ func AreGivenArgumentsValid(parsedNumber int, err error) bool {
 	}
 
 	return true
+}
+
+func IsGivenThreadsAmountBiggerThanMap(threadsAmount int) bool {
+	return threadsAmount > config.MapSize^2
 }
 
 func isPowerOfFour(number int) bool {

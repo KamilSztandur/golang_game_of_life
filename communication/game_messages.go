@@ -14,7 +14,7 @@ var clear map[string]func()
 func PrintMapState(currentMap [config.MapSize][config.MapSize]bool) {
 	printMapToScreen(currentMap)
 	waitFewMoments()
-	callClear()
+	clearScreen()
 }
 
 func init() {
@@ -40,7 +40,7 @@ func init() {
 	}
 }
 
-func callClear() {
+func clearScreen() {
 	value, ok := clear[runtime.GOOS]
 	if ok {
 		value()
