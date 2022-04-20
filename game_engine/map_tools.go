@@ -1,7 +1,6 @@
 package game_engine
 
 import (
-	"fmt"
 	"golang_game_of_life/config"
 	"math"
 	"math/rand"
@@ -32,8 +31,6 @@ func GenerateMap() [config.MapSize][config.MapSize]bool {
 func GetCellEnvironment(golMap *[config.MapSize][config.MapSize]bool, cellRowIndex int, cellColIndex int) [3][3]bool {
 	var environment [3][3]bool
 
-	var aliveNeighbors int
-
 	for rowIndex, row := range environment {
 		for colIndex, _ := range row {
 
@@ -44,10 +41,6 @@ func GetCellEnvironment(golMap *[config.MapSize][config.MapSize]bool, cellRowInd
 				environment[rowIndex][colIndex] = false
 			} else {
 				environment[rowIndex][colIndex] = golMap[y][x]
-
-				if golMap[y][x] {
-					aliveNeighbors++
-				}
 			}
 		}
 	}
@@ -61,16 +54,12 @@ func isOutOfRange(rowIndex int, colIndex int) bool {
 
 func DivideMapForChunks(threadsAmount int) []ChunkIndexes {
 	chunks := make([]ChunkIndexes, threadsAmount)
-	getChunksIndexesList(chunks[:])
-
-	for _, value := range chunks {
-		fmt.Println(value)
-	}
+	calculateChunksIndexesList(chunks[:])
 
 	return chunks
 }
 
-func getChunksIndexesList(chunks []ChunkIndexes) {
+func calculateChunksIndexesList(chunks []ChunkIndexes) {
 	threadsAmount := len(chunks)
 
 	howManyChunksInLength := int(math.Sqrt(float64(threadsAmount)))
@@ -94,7 +83,6 @@ func getChunksIndexesList(chunks []ChunkIndexes) {
 			}
 
 			chunks[currentChunkIndex] = currentChunk
-
 			currentChunkIndex++
 		}
 	}
