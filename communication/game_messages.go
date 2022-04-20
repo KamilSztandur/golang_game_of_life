@@ -9,10 +9,6 @@ import (
 	"time"
 )
 
-var clear map[string]func()
-
-const cellCharacter = string(rune(128))
-
 func PrintHelpMessage() {
 	fmt.Println("Don't forget that you can customize number of threads by passing argument to this program")
 	fmt.Println("$ go build main.go 16")
@@ -33,10 +29,9 @@ func PrintMapState(currentMap [config.MapSize][config.MapSize]bool) {
 	clearScreen()
 }
 
-func init() {
-	clear = make(map[string]func())
-
-	clear["linux"] = func() {
+func clearScreen() {
+	switch runtime.GOOS {
+	case "linux":
 		cmd := exec.Command("clear")
 		cmd.Stdout = os.Stdout
 
@@ -44,8 +39,7 @@ func init() {
 		if err != nil {
 			return
 		}
-	}
-	clear["windows"] = func() {
+	case "windows":
 		cmd := exec.Command("cmd", "/c", "cls")
 		cmd.Stdout = os.Stdout
 
@@ -53,13 +47,7 @@ func init() {
 		if err != nil {
 			return
 		}
-	}
-}
 
-func clearScreen() {
-	value, ok := clear[runtime.GOOS]
-	if ok {
-		value()
 	}
 }
 
