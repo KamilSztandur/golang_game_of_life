@@ -1,85 +1,68 @@
 package game_engine
 
 import (
-	"fmt"
 	"golang_game_of_life/communication"
 	"golang_game_of_life/config"
-	"math"
+	"sync"
 )
 
-var threadsAmount int
-var chunks []ChunkIndexes
-
-var oldMap [config.MapSize][config.MapSize]bool
-var newMap [config.MapSize][config.MapSize]bool
-
-type ChunkIndexes struct {
-	rowStartIndex int
-	rowEndIndex   int
-	colStartIndex int
-	colEndIndex   int
+type GameState struct {
+	chunks     []ChunkIndexes
+	currentMap [config.MapSize][config.MapSize]bool
 }
 
-func LaunchGame(n int) {
-	threadsAmount = n
-	oldMap = GenerateMap()
-	chunks = divideMapForChunks()
+func LaunchGame(threadsAmount int) {
+	state := GameState{
+		chunks:     DivideMapForChunks(threadsAmount),
+		currentMap: GenerateMap(),
+	}
 
-	//runGame()
+	runGame(&state)
 }
 
-func runGame() {
-	for true {
-		communication.PrintMapState(oldMap)
-		newMap = getUpdatedMap()
+func runGame(state *GameState) {
+	for {
+		communication.PrintMapState(state.currentMap)
+		newMap := getUpdatedMap(state)
 
-		oldMap = newMap
+		state.currentMap = newMap
 	}
 }
 
-func getUpdatedMap() [config.MapSize][config.MapSize]bool {
-	return oldMap
-}
+func getUpdatedMap(state *GameState) [config.MapSize][config.MapSize]bool {
+	var updatedMap [config.MapSize][config.MapSize]bool
+	var waitGroup sync.WaitGroup
 
-func divideMapForChunks() []ChunkIndexes {
-	chunks := make([]ChunkIndexes, threadsAmount)
-	getChunksIndexesList(chunks[:])
+	var threadsAmount = len(state.chunks)
+	for i := 0; i < threadsAmount; i++ {
+		waitGroup.Add(1)
 
-	for _, value := range chunks {
-		fmt.Println(value)
+		go func(index int) {
+			defer waitGroup.Done()
+			updateChunk(index, state, &updatedMap)
+		}(i)
 	}
 
-	return chunks
+	waitGroup.Wait()
+
+	return updatedMap
 }
 
-func getChunksIndexesList(chunks []ChunkIndexes) {
-	howManyChunksInLength := int(math.Sqrt(float64(threadsAmount)))
-	chunkSize := int(float64(config.MapSize) / float64(howManyChunksInLength))
+func updateChunk(chunkIndex int, state *GameState, newMap *[config.MapSize][config.MapSize]bool) {
+	rowStartIndex := state.chunks[chunkIndex].rowStartIndex
+	rowEndIndex := state.chunks[chunkIndex].rowEndIndex
+	colStartIndex := state.chunks[chunkIndex].colStartIndex
+	colEndIndex := state.chunks[chunkIndex].colEndIndex
 
-	currentChunkIndex := 0
+	for rowIndex := rowStartIndex; rowIndex <= rowEndIndex; rowIndex++ {
+		for colIndex := colStartIndex; colIndex <= colEndIndex; colIndex++ {
+			cellEnvironment := GetCellEnvironment(&state.currentMap, rowIndex, colIndex)
 
-	for i := 0; i < howManyChunksInLength; i++ {
-		rowStartIndex := i * chunkSize
-		rowEndIndex := (i+1)*chunkSize - 1
-
-		for j := 0; j < howManyChunksInLength; j++ {
-			colStartIndex := j * chunkSize
-			colEndIndex := (j+1)*chunkSize - 1
-
-			currentChunk := ChunkIndexes{
-				rowStartIndex: rowStartIndex,
-				colStartIndex: colStartIndex,
-				colEndIndex:   colEndIndex,
-				rowEndIndex:   rowEndIndex,
+			if state.currentMap[rowIndex][colIndex] {
+				newMap[rowIndex][colIndex] = ShouldCellSurvive(cellEnvironment)
+			} else {
+				newMap[rowIndex][colIndex] = ShouldCellComeToLife(cellEnvironment)
 			}
-
-			chunks[currentChunkIndex] = currentChunk
-
-			currentChunkIndex++
 		}
 	}
-}
-
-func updateChunk(rowStartIndex int, rowEndIndex int, colStartIndex int, colEndIndex int) {
-	//TODO
 }
