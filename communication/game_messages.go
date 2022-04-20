@@ -57,7 +57,7 @@ func printMapToScreen(currentMap [config.MapSize][config.MapSize]bool) {
 			if cell {
 				fmt.Print("#")
 			} else {
-				fmt.Print("_")
+				fmt.Print(" ")
 			}
 		}
 
