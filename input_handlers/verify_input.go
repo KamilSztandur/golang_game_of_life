@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func UserPassedArgument(args []string) bool {
+func UserPassedArgument() bool {
 	return len(os.Args) == 1
 }
 

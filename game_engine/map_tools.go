@@ -20,7 +20,7 @@ func GenerateMap() [config.MapSize][config.MapSize]bool {
 	rand.Seed(time.Now().UnixNano())
 
 	for rowIndex, row := range golMap {
-		for colIndex, _ := range row {
+		for colIndex := range row {
 			golMap[rowIndex][colIndex] = rand.Intn(2) != 1
 		}
 	}
@@ -32,10 +32,10 @@ func GetCellEnvironment(golMap *[config.MapSize][config.MapSize]bool, cellRowInd
 	var environment [3][3]bool
 
 	for rowIndex, row := range environment {
-		for colIndex, _ := range row {
+		for colIndex := range row {
 
-			var y = cellRowIndex - (1 - rowIndex)
-			var x = cellColIndex - (1 - colIndex)
+			y := cellRowIndex - (1 - rowIndex)
+			x := cellColIndex - (1 - colIndex)
 
 			if isOutOfRange(y, x) {
 				environment[rowIndex][colIndex] = false

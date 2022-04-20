@@ -10,9 +10,9 @@ import (
 )
 
 func main() {
-	var threadsAmount int = config.DefaultThreadsAmount
+	threadsAmount := config.DefaultThreadsAmount
 
-	if input_handlers.UserPassedArgument(os.Args) {
+	if input_handlers.UserPassedArgument() {
 		communication.PrintHelpMessage()
 	} else {
 		inputAmount, err := strconv.Atoi(os.Args[1])

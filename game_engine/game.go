@@ -33,7 +33,7 @@ func getUpdatedMap(state *GameState) [config.MapSize][config.MapSize]bool {
 	var updatedMap [config.MapSize][config.MapSize]bool
 	var waitGroup sync.WaitGroup
 
-	var threadsAmount = len(state.chunks)
+	threadsAmount := len(state.chunks)
 	for i := 0; i < threadsAmount; i++ {
 		waitGroup.Add(1)
 

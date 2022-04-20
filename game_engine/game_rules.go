@@ -1,7 +1,7 @@
 package game_engine
 
 func ShouldCellSurvive(fragment [3][3]bool) bool {
-	var aliveNeighbors = 0
+	aliveNeighbors := 0
 
 	for rowIndex, row := range fragment {
 		for colIndex, cell := range row {
@@ -19,7 +19,7 @@ func ShouldCellSurvive(fragment [3][3]bool) bool {
 }
 
 func ShouldCellComeToLife(fragment [3][3]bool) bool {
-	var aliveNeighbors = 0
+	aliveNeighbors := 0
 
 	for rowIndex, row := range fragment {
 		for colIndex, cell := range row {
